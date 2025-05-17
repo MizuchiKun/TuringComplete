@@ -1,0 +1,25 @@
+# reg4: guessTooHigh
+
+# Start with a guess of 128/0b10000000.
+#0b10000000
+255
+reg0_to_reg3
+1
+reg0_to_reg2
+
+label start
+
+#reg3_to_out  # Guess value in reg3.
+#in_to_reg4  # Store guessTooHigh in reg4.
+
+# fuck it, I'm just gonna check every value
+# i fucking need functions
+# and NOT, etc.
+# maybe just expand computer?
+
+reg3_to_out
+reg3_to_reg1
+sub
+
+start
+jump  # Jump to start.
