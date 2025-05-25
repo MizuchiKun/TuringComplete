@@ -1,0 +1,46 @@
+# Robot commands.
+const turn_left 0
+const move 1
+const turn_right 2
+const do_nothing 3
+const use 4
+const shoot 5
+
+const door 3
+# Store door in reg2 for calculations.
+door reg0_to_reg2
+
+
+# (Start of game loop)
+label game_loop
+
+in_to_reg1  # Store input for calcs.
+
+# Check if door in front.
+label if_door
+sub  # Sub door from input.
+# Jump to next condition if not door.
+if_something jnz
+# if_door body:
+use reg0_to_out  # Use the door.
+conditions_end jmp  # Jump to end of conditions.
+
+# Check if something in front (except door or 'nothing').
+label if_something
+in_to_reg3  # Copy input to reg3 for comparison.
+# Jump to next condition (else) if not *something*.
+else jz
+# if_something body:
+turn_right reg0_to_out  # Turn right.
+conditions_end jmp  # Jump to end of conditions.
+
+# Else there's nothing.
+label else
+move reg0_to_out
+turn_left reg0_to_out  # To hug left wall.
+
+# End of conditions.
+label conditions_end
+
+# Jump to start of game loop.
+game_loop jmp
