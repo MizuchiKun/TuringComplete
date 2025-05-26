@@ -1,16 +1,16 @@
 # reg4: guessTooHigh
 
 # Start with a guess of 128/0b10000000.
-#imm|0b10000000
-imm|255
-mov|from*reg0|reg3
-imm|1
-mov|from*reg0|reg2
+#0b10000000
+255
+reg0_to_reg3
+1
+reg0_to_reg2
 
 label start
 
-#mov|from*reg3|out  # Guess value in reg3.
-#mov|from*in|reg4  # Store guessTooHigh in reg4.
+#reg3_to_out  # Guess value in reg3.
+#in_to_reg4  # Store guessTooHigh in reg4.
 
 # (intend was to do binary search, of course)
 # fuck it, I'm just gonna check every value
@@ -18,8 +18,9 @@ label start
 # and NOT, etc.
 # maybe just expand computer?
 
-mov|from*reg3|out
-mov|from*reg3|reg1
+reg3_to_out
+reg3_to_reg1
 sub
 
-start jmp  # Jump to start.
+start
+jmp  # Jump to start.

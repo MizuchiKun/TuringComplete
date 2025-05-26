@@ -6,17 +6,15 @@ const do_nothing 3
 const use 4
 const shoot 5
 
-# Tile IDs.
 const door 3
-
 # Store door in reg2 for calculations.
-imm|door mov|from*reg0|reg2
+door reg0_to_reg2
 
 
 # (Start of game loop)
 label game_loop
 
-mov|from*in|reg1  # Store input for calcs.
+in_to_reg1  # Store input for calcs.
 
 # Check if door in front.
 label if_door
@@ -24,22 +22,22 @@ sub  # Sub door from input.
 # Jump to next condition if not door.
 if_something jnz
 # if_door body:
-imm|use mov|from*reg0|out  # Use the door.
+use reg0_to_out  # Use the door.
 conditions_end jmp  # Jump to end of conditions.
 
 # Check if something in front (except door or 'nothing').
 label if_something
-mov|from*in|reg3  # Copy input to reg3 for comparison.
+in_to_reg3  # Copy input to reg3 for comparison.
 # Jump to next condition (else) if not *something*.
 else jz
 # if_something body:
-imm|turn_right mov|from*reg0|out  # Turn right.
+turn_right reg0_to_out  # Turn right.
 conditions_end jmp  # Jump to end of conditions.
 
 # Else there's nothing.
 label else
-imm|move mov|from*reg0|out
-imm|turn_left mov|from*reg0|out  # To hug left wall.
+move reg0_to_out
+turn_left reg0_to_out  # To hug left wall.
 
 # End of conditions.
 label conditions_end

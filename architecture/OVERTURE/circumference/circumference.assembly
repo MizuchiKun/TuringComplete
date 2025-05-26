@@ -1,31 +1,26 @@
 const pi 3
-const 2pi 2*pi
-
-# reg4: radius
-# reg5: 
 
 # Loop start.
 label circ_loop
-	# Save radius in reg4.
-	in_to_reg4
+# Save radius in reg4.
+mov|from*in|reg4
 
-	# Calculate circumference by 
-	# repeated addition (x 6 (2pi)).
-	reg4_to_reg1
-	reg4_to_reg2
-	add  # 2r.
-	reg3_to_reg1
-	add  # 3r.
-	reg3_to_reg1
-	add  # 4r.
-	reg3_to_reg1
-	add  # 5r.
-	reg3_to_reg1
-	add  # 6r.
-	
-	# Output result.
-	reg3_to_out
+# Calculate circumference by 
+# repeated addition (x 6 (2pi)).
+mov|from*reg4|reg1
+mov|from*reg4|reg2
+add  # 2r.
+mov|from*reg3|reg1
+add  # 3r.
+mov|from*reg3|reg1
+add  # 4r.
+mov|from*reg3|reg1
+add  # 5r.
+mov|from*reg3|reg1
+add  # 6r.
+
+# Output result.
+mov|from*reg3|out
 
 # Jump to loop start.
-circ_loop
-jump
+circ_loop jmp

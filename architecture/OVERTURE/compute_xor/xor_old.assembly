@@ -1,20 +1,20 @@
 label loop_start
 
-mov|from*in|reg1  # First byte in reg1.
-mov|from*in|reg2  # Second byte in reg2.
+in_to_reg1  # First byte in reg1.
+in_to_reg2  # Second byte in reg2.
 
 # OR both values and store in reg4.
 or
-mov|from*reg3|reg4
+reg3_to_reg4
 
 # NAND both values and copy to reg2.
 nand
-mov|from*reg3|reg2
+reg3_to_reg2
 
 # AND previous two results and output.
-mov|from*reg4|reg1  # OR result.
+reg4_to_reg1  # OR result.
 and
-mov|from*reg3|out
+reg3_to_out
 
 # Jump to loop start.
 loop_start jmp
