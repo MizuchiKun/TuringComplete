@@ -1,0 +1,19 @@
+label loop
+
+	# Store input in reg0.
+	mov input to reg0
+
+	# If pop, pop from stack to output.
+	label if_pop
+	jne|i2 reg0 0 else_push
+		mov stack to output
+	jmp to _ end_if
+
+	# Else push, push input to stack.
+	label else_push
+		mov reg0 to stack
+	jmp to _ end_if
+
+	label end_if
+
+jmp to _ loop

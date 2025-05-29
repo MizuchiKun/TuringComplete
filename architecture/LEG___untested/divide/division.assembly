@@ -1,0 +1,38 @@
+# reg0: remainder/initially numerator.
+# reg1: denominator.
+# reg2: quotient.
+const remainder reg0
+const denominator reg1
+const quotient reg2
+
+# Get numerator and denominator.
+mov input to remainder
+mov input to denominator
+
+# Skip division if remainder/numerator can't even be divided once.
+jl remainder denominator output_results
+
+# If denominator is 0.
+#  . . . That's not my problem/fault.
+
+# Return remainder as quotient if denominator is 1.
+jne|i2 denominator 1 division_loop
+mov remainder to quotient
+movi 0 to remainder
+jmp to _ output_results
+
+label division_loop
+	# Subtract denominator from remainder.
+	sub remainder denominator remainder
+
+	# Increase quotient.
+	add|i2 quotient 1 quotient
+
+
+# Jump to start of loop.
+jge remainder denominator division_loop
+
+label output_results
+# Output quotient and remainder.
+mov quotient to output
+mov remainder to output
