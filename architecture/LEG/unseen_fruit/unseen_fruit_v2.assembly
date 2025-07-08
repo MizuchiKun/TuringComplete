@@ -1,0 +1,93 @@
+# Constants.
+const turn_left 0
+const move 1
+const turn_right 2
+const wait 3
+const use 4
+const shoot 5
+const conveyor 92
+
+const false 0
+const true 1
+
+jmp to _ SOC
+# Functions - Start.
+label func_is_new_fruit
+# Expects reg0 to be fruit_id.
+# Expects reg1 to be unique_fruit_amount.
+movi true to reg2  # True by default.
+
+# Check all stored fruits in memory.
+movi 0 to reg3  # Initialise counter.
+notj^jl reg3 reg1 end_loop_search  # Maybe skip loop.
+label loop_search
+
+# Set memory address.
+mov reg3 to ram_addr
+# Compare fruit_id to ram value.
+label if_fruits_same
+notj^je reg0 ram end_if_fruits
+movi false to reg2
+jmp to _ end_loop_search
+label end_if_fruits
+
+add|i2 reg3 1 reg3  # Increment counter.
+jl reg3 reg1 loop_search
+label end_loop_search
+
+ret _ _ _
+# Functions - End.
+
+label SOC  # Start of code.
+
+# Move in position.
+movi turn_right to output
+movi move to output
+movi turn_right to output
+movi move to output
+movi move to output
+movi move to output
+movi move to output
+movi turn_right to output
+movi move to output
+movi turn_left to output
+movi move to output
+
+# Keep looking for fruits.
+label loop_fruit
+
+# Get fruit (if any).
+mov input to reg0
+
+# Handle fruit.
+label if_fruit
+notj^jne|i2 reg0 conveyor end_if_fruit
+
+# Check if new fruit (result in reg2).
+call func_is_new_fruit _ _
+# Add fruit_id to ram if it's new.
+label if_new_fruit
+notj^je|i2 reg2 true else_old_fruit
+# Select address.
+mov reg1 to ram_addr
+# Store fruit_id.
+mov reg0 to ram
+# Increment unique_fruit_amount.
+add|i2 reg1 1 reg1
+jmp to _ end_if_new_fruit
+label else_old_fruit
+# Interact with panel.
+movi turn_right to output
+movi use to output
+movi turn_left to output
+label end_if_new_fruit
+
+jmp to _ end_if_fruit
+label end_if_fruit
+# Wait to pass time.
+movi wait to output
+
+jmp to _ loop_fruit
+
+label EOF  # Halts program.
+jmp to _ EOF

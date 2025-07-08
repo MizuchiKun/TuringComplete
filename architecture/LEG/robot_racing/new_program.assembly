@@ -1,0 +1,12 @@
+jmp to _ SOC
+# Functions - Start.
+#label func_name
+#func code ...
+# Functions - End.
+
+label SOC  # Start of code.
+
+#code ...
+
+label EOF  # Halts program.
+jmp _ to EOF

@@ -1,0 +1,49 @@
+jmp to _ SOC
+# Functions - Start.
+label func_square
+mul reg0 reg0 reg1
+ret _ _ _
+# Functions - End.
+
+
+label SOC # Start of code.
+movi 2 to reg0
+call func_square _ _
+mov reg1 to reg2
+
+movi 3 to reg0
+call func_square _ _
+mov reg1 to reg3
+
+movi 4 to reg0
+call func_square _ _
+mov reg1 to reg4
+
+movi 5 to reg0
+call func_square _ _
+mov reg1 to reg5
+
+movi 6 to reg0
+call func_square _ _
+mov reg1 to reg6
+
+label EOF
+jmp to _ EOF
+# i think i need to do this
+# via. hardware somehow.
+# though half the problem was just
+# the opcode.
+# now it should be fine:tm:.
+## or at least i 'only' have to make it.
+
+# maybe use bits 5-4 for the 
+# (function) 'modes', and then the 
+# remaining ones for whether 
+# to call or ret?
+## Already did this (in instructions thingy)!
+
+# instruction: call <label/addr> _ _
+# instruction: ret _ _ _
+## fine? fine!
+
+# BUT: try to make 'call' work in 1 tick!

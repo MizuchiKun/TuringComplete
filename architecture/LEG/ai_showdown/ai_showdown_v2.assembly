@@ -1,0 +1,36 @@
+jmp to _ SOC
+# Functions - Start.
+#label func_name
+#funccode ...
+# Functions - End.
+
+label SOC  # Start of code.
+
+
+label loop
+
+# Store cards_left in reg0.
+mov input to reg0
+
+# Compute move.
+# Sub 1 from cards_left and store in reg1.
+sub|i2 reg0 1 reg1
+# take_amount = (cards_left-1) % 4.
+mod|i2 reg1 4 reg1
+
+# Make your move.
+# (Output 1 if take_amount = 0).
+label if_take_amount_zero
+notj^je|i2 reg1 0 else_take_amount_nz
+movi 1 to output
+jmp to _ end_if
+label else_take_amount_nz
+mov reg1 to output
+label end_if
+
+jmp to _ loop
+
+
+jmp to _ SOC
+
+label EOF  # Halts program.

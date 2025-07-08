@@ -1,0 +1,37 @@
+# Constants.
+const space 32
+const false 0
+const true 1
+
+jmp to _ SOC
+# Functions - Start.
+#label func_name
+#func code ...
+# Functions - End.
+
+
+label SOC  # Start of code.
+
+# Initialise capitalise_next variable.
+movi true to reg1
+label loop
+# Store input character.
+mov input to reg0
+
+label if_capitalise_next
+jne|i2 reg1 true elif_space
+sub|i2 reg0 space reg0  # Capitalise.
+movi false to reg1  # Set bool to false.
+jmp to _ end_if
+label elif_space
+jne|i2 reg0 space end_if
+movi true to reg1  # Set bool to true.
+label end_if
+
+# Output character.
+mov reg0 to output
+
+jmp to _ loop
+
+label EOF  # Halts program.
+jmp _ to EOF

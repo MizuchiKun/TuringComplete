@@ -1,0 +1,36 @@
+jmp to _ SOC
+# Functions - Start.
+label func_gen_next_seed
+# Assume seed in reg0.
+# Calc seed' and store in reg1.
+shr|i2 reg0 1 reg1
+# Calc temp1 and store in reg0.
+xor reg0 reg1 reg0
+
+# Calc temp1' and store in reg1.
+shl|i2 reg0 1 reg1
+# Calc temp2 and store in reg0.
+xor reg0 reg1 reg0
+
+# Calc temp2' and store in reg1.
+shr|i2 reg0 2 reg1
+# Calc next_seed and store in reg0.
+xor reg0 reg1 reg0
+
+movi 0 to reg1  # Clear reg1.
+ret _ _ _
+# Functions - End.
+
+label SOC  # Start of code.
+
+mov input to reg0  # Get initial seed.
+
+label loop_dance
+# Get next_seed.
+call func_gen_next_seed _ _
+# Send next_seed mod 4 to output.
+mod|i2 reg0 4 output
+jmp to _ loop_dance  # Jump to loop start.
+
+label EOF  # Halts program.
+jmp _ to EOF
