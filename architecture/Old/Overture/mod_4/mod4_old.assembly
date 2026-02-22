@@ -1,0 +1,11 @@
+label start
+
+in_to_reg1  # Store input in reg1.
+0b11
+reg0_to_reg2  # Store 0b11 in reg2.
+and  # 'and 0b11' is same as 'mod 4'.
+reg3_to_out  # Output mod 4 result.
+
+# Jump back to start.
+start
+jmp

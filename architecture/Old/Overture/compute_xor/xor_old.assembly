@@ -1,0 +1,20 @@
+label loop_start
+
+in_to_reg1  # First byte in reg1.
+in_to_reg2  # Second byte in reg2.
+
+# OR both values and store in reg4.
+or
+reg3_to_reg4
+
+# NAND both values and copy to reg2.
+nand
+reg3_to_reg2
+
+# AND previous two results and output.
+reg4_to_reg1  # OR result.
+and
+reg3_to_out
+
+# Jump to loop start.
+loop_start jmp

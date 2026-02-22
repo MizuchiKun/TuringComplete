@@ -1,0 +1,99 @@
+# Robot commands.
+const turn_left 0
+const move 1
+const turn_right 2
+const do_nothing 3
+const use 4
+const shoot 5
+
+label loop
+
+# No bloody clue.
+# I guess I'm just hard-coding moves ...
+
+move
+reg0_to_out
+reg0_to_out
+reg0_to_out
+reg0_to_out
+reg0_to_out
+reg0_to_out
+turn_left
+reg0_to_out
+do_nothing
+reg0_to_out
+shoot
+reg0_to_out
+reg0_to_out
+reg0_to_out
+reg0_to_out
+turn_left
+reg0_to_out
+reg0_to_out
+do_nothing
+reg0_to_out
+reg0_to_out
+reg0_to_out
+reg0_to_out
+reg0_to_out
+reg0_to_out
+reg0_to_out
+reg0_to_out
+reg0_to_out
+reg0_to_out
+reg0_to_out
+reg0_to_out
+reg0_to_out
+shoot
+reg0_to_out
+reg0_to_out
+reg0_to_out
+reg0_to_out
+turn_left
+reg0_to_out
+reg0_to_out
+do_nothing
+reg0_to_out
+reg0_to_out
+reg0_to_out
+reg0_to_out
+reg0_to_out
+reg0_to_out
+reg0_to_out
+reg0_to_out
+reg0_to_out
+reg0_to_out
+reg0_to_out
+reg0_to_out
+reg0_to_out
+reg0_to_out
+shoot
+reg0_to_out
+reg0_to_out
+reg0_to_out
+reg0_to_out
+turn_left
+reg0_to_out
+reg0_to_out
+do_nothing
+reg0_to_out
+reg0_to_out
+reg0_to_out
+reg0_to_out
+reg0_to_out
+reg0_to_out
+reg0_to_out
+reg0_to_out
+reg0_to_out
+reg0_to_out
+reg0_to_out
+reg0_to_out
+reg0_to_out
+shoot
+reg0_to_out
+reg0_to_out
+reg0_to_out
+reg0_to_out
+
+#loop
+#jump
