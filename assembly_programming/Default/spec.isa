@@ -1,0 +1,79 @@
+[fields]
+
+register
+r0 000
+r1 001
+r2 010
+r3 011
+r4 100
+r5 101
+in 110
+out 110
+
+[instructions]
+
+imm %a(immediate)
+00aaaaaa
+Moves immediate %a to r0.
+
+
+
+nand
+01000000
+NANDs the values in r1 and r2 and stores the result in r3.
+
+or
+01000001
+ORs the values in r1 and r2 and stores the result in r3.
+
+and
+01000010
+ANDs the values in r1 and r2 and stores the result in r3.
+
+nor
+01000011
+NORs the values in r1 and r2 and stores the result in r3.
+
+add
+01000100
+Adds the values in r1 and r2 and stores the result in r3.
+
+nand
+01000101
+Subtracts the values in r1 and r2 and stores the result in r3.
+
+
+
+mov %a(register), %b(register)
+10bbbaaa
+Moves a value from %b to %a.
+
+
+
+jmp
+11000001
+Jumps to the address in r0, unconditionally.
+
+jez
+11000010
+Jumps to the address in r0, if r3 == 0.
+
+jnez
+11000011
+Jumps to the address in r0, if r3 != 0.
+
+jltz
+11000100
+Jumps to the address in r0, if r3 < 0.
+
+jgtez
+11000101
+Jumps to the address in r0, if r3 >= 0.
+
+jltez
+11000110
+Jumps to the address in r0, if r3 <= 0.
+
+jgtz
+11000111
+Jumps to the address in r0, if r3 > 0.
