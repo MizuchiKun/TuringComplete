@@ -12,8 +12,9 @@ r2 010
 r3 011
 r4 100
 r5 101
-in 110
-out 110
+r6 110
+in 111
+out 111
 
 [instructions]
 
@@ -48,6 +49,14 @@ ADD r1 and r2 and store the result in r3.
 sub
 01000101
 SUB r1 and r2 and store the result in r3.
+
+lsl
+01000110
+Shifts r1 left by 1 bit.
+
+lsr
+01000111
+Shifts r1 right by 1 bit.
 
 nop
 11000000
