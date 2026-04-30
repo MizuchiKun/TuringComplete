@@ -1,7 +1,14 @@
+[settings]
+
+name = "TRV2602A"
+variant = "TRV2602A-I"
+
+
+
 [fields]
 
-register
 ; Register xID names.
+reg_id
 x0   00000
 x1   00001
 x2   00010
@@ -34,7 +41,9 @@ x28  11100
 x29  11101
 x30  11110
 x31  11111
+
 ; Register ABI names.
+reg_abi
 zero 00000
 ra   00001
 sp   00010
@@ -69,23 +78,95 @@ t4   11101
 t5   11110
 t6   11111
 
+; All R-type instructions.
+; (funct7 = inst[16:10], funct3 = inst[9:7], opcode = inst[6:0])
+inst_r_type
+add  00000000000110011
+sub  01000000000110011
+xor  00000001000110011
+or   00000001100110011
+and  00000001110110011
+sll  00000000010110011
+srl  00000001010110011
+sra  01000001010110011
+slt  00000000100110011
+sltu 00000000110110011
 
+; All I-type instructions.
+; (diff3 = inst[12:10], funct3 = inst[9:7], opcode = inst[6:0])
+; (diff3 is to differentiate regular instructions (000), slli&srli (010), srai (011), ecall (100), and ebreak (101).)
+; (See 'more' details at I-type instruction implementation below.)
+inst_i_type
+addi  0000000010011
+xori  0001000010011
+ori   0001100010011
+andi  0001110010011
+slli  0100010010011
+srli  0101010010011
+srai  0111010010011
+slti  0000100010011
+sltiu 0000110010011
+lb    0000000000011
+lh    0000010000011
+lw    0000100000011
+lbu   0001000000011
+lhu   0001010000011
+jalr  0000001100111
+;ecall  1000001110011  ; Not implemented.
+;ebreak 1010001110011  ; Not implemented.
+
+; All S-type instructions.
+; (funct3 = inst[9:7], opcode = inst[6:0])
+inst_s_type
+sb 0000100011
+sh 0010100011
+sw 0100100011
 
 
 
 [instructions]
 
-mov %a(register), %b(register)
-00aaabbb
-# Moves a value from %b to %a.
+; R-type instructions.
+%inst(inst_r_type)  %rd(reg_id|reg_abi) , %rs1(reg_id|reg_abi) , %rs2(reg_id|reg_abi)
+%f7 = %inst[16:10] ; funct7
+%f3 = %inst[9:7]   ; funct3
+%op = %inst[6:0]   ; opcode
+%f7[6:0] %rs2[4:0] %rs1[4:0] %f3[2:0] %rd[4:0] %op[6:0]
+# [op] rd, rs1, rs2                                                 Implements all R-type instructions: add, sub, xor, or, and, sli, sri, sra, slt, sltu.
+
+; I-type instructions.
+%inst(inst_i_type)  %rd(reg_id|reg_abi) , %rs1(reg_id|reg_abi) , %imm_arg(S12 immediate)
+%d3 = %inst[12:10] ; diff3 (not an official RV32I thing, just a helper for these ISA specs)
+%f3 = %inst[9:7]   ; funct3
+%op = %inst[6:0]   ; opcode
+%imm_hi = %imm_arg[11:5]
+%imm_lo = %imm_arg[4:0]
+%imm_hi = (%d3 == 0b010) ? 0b0000000 : %imm_hi  ; If slli or srli, replace %imm[11:5] with 0x00.
+%imm_hi = (%d3 == 0b011) ? 0b0100000 : %imm_hi  ; If srai, replace %imm[11:5] with 0x20.
+%imm = %imm_hi << 5 + %imm_lo  ; immediate (virtual operand necessary to work around a bug in the game)
+%imm = (%d3 == 0b100) ? 0x0 : %imm  ; If ecall, replace %imm with 0x0.
+%imm = (%d3 == 0b101) ? 0x1 : %imm  ; If ebreak, replace %imm with 0x1.
+%imm[11:0] %rs1[4:0] %f3[2:0] %rd[4:0] %op[6:0]
+# [op] rd, rs1, imm                                                       (imm is an S12)                                                   Implements all I-type instructions (except ecall and ebreak): addi, xori, ori, andi, slli, srli, srai, slti, sltiu, lb, lh, lw, lbu, lhu, jalr.
+
+; R-type instructions.
+%inst(inst_s_type)  %rs2(reg_id|reg_abi) , %imm(S12 immediate) (%rs1(reg_id|reg_abi))
+%f3 = %inst[9:7]   ; funct3
+%op = %inst[6:0]   ; opcode
+%imm[11:5] %rs2[4:0] %rs1[4:0] %f3[2:0] %imm[4:0] %op[6:0]
+# [sb/sh/sw] rs2, offset(rs1)                                                (offset is an S12)                                                    Stores the low 8/16/32 bits of rs2 at the memory address (rs1 + offset).
 
 
-mov %a(register), %b(immediate)
-01aaabbb
-# Moves %b to %a.
 
 
-jmp %a(label)
-10000000aaaaaaaa
-# Jumps to %a.
+
+
+
+
+
+
+
+
+
+
 
