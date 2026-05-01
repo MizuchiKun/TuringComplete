@@ -9,4 +9,7 @@ U32 0x55555555
 U32 0x55555555
 
 ; Instructions to test if CPU is working as intended.
-sb t2, 200(t0)
+jal t0, lel
+
+
+lel: add x0,x0,x0

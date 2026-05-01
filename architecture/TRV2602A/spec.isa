@@ -122,6 +122,27 @@ sb 0000100011
 sh 0010100011
 sw 0100100011
 
+; All B-type instructions.
+; (funct3 = inst[9:7], opcode = inst[6:0])
+inst_b_type
+beq  0001100011
+bne  0011100011
+blt  1001100011
+bge  1011100011
+bltu 1101100011
+bgeu 1111100011
+
+; All U-type instructions.
+; (opcode = inst[6:0])
+inst_u_type
+lui   0110111
+auipc 0010111
+
+; All J-type instructions.
+; (opcode = inst[6:0])
+inst_j_type
+jal 1101111
+
 
 
 [instructions]
@@ -149,24 +170,49 @@ sw 0100100011
 %imm[11:0] %rs1[4:0] %f3[2:0] %rd[4:0] %op[6:0]
 # [op] rd, rs1, imm                                                       (imm is an S12)                                                   Implements all I-type instructions (except ecall and ebreak): addi, xori, ori, andi, slli, srli, srai, slti, sltiu, lb, lh, lw, lbu, lhu, jalr.
 
-; R-type instructions.
+; S-type instructions.
 %inst(inst_s_type)  %rs2(reg_id|reg_abi) , %imm(S12 immediate) (%rs1(reg_id|reg_abi))
 %f3 = %inst[9:7]   ; funct3
 %op = %inst[6:0]   ; opcode
 %imm[11:5] %rs2[4:0] %rs1[4:0] %f3[2:0] %imm[4:0] %op[6:0]
 # [sb/sh/sw] rs2, offset(rs1)                                                (offset is an S12)                                                    Stores the low 8/16/32 bits of rs2 at the memory address (rs1 + offset).
 
+; B-type instructions.
+%inst(inst_b_type)  %rs1(reg_id|reg_abi) , %rs2(reg_id|reg_abi) , %label(label)
+%f3 = %inst[9:7]   ; funct3
+%op = %inst[6:0]   ; opcode
+%off = %label - $start  ; relative offset
+%off[12:12] %off[10:5] %rs2[4:0] %rs1[4:0] %f3[2:0] %off[4:1] %off[11:11] %op[6:0]
+# [op] rs1, rs2, label                                                Branches to %label if %rs1 <%inst> %rs2 is true.
 
+; ; B-type instructions (using immediate offset).
+; %inst(inst_b_type)  %rs1(reg_id|reg_abi) , %rs2(reg_id|reg_abi) , %imm(S13 immediate)
+; %f3 = %inst[9:7]   ; funct3
+; %op = %inst[6:0]   ; opcode
+; if (%imm % 2 == 1) {
+; 	  "The offset must be an even number!"
+; }
+; %imm[12:12] %imm[10:5] %rs2[4:0] %rs1[4:0] %f3[2:0] %imm[4:1] %imm[11:11] %op[6:0]
+; # [op] rs1, rs2, offset                                                      (offset is an S13)                                                   Branches to PC+(%imm) if %rs1 [%inst] %rs2 is true.
 
+; U-type instructions.
+%inst(inst_u_type)  %rd(reg_id|reg_abi) , %imm(S32 immediate)
+%op = %inst[6:0]   ; opcode
+%imm[31:12] %rd[4:0] %op[6:0]
+# [lui/auipc] rd, imm                                                     (imm is an S32)                                                       Stores the high 20 bits of %imm in %rd (auipc: and adds PC to it).
 
+; J-type instructions.
+%inst(inst_j_type)  %rd(reg_id|reg_abi) , %label(label)
+%op = %inst[6:0]   ; opcode
+%off = %label - $start  ; relative offset
+%off[20:20] %off[10:1] %off[11:11] %off[19:12] %rd[4:0] %op[6:0]
+# [jal] rd, offset                                                     (offset is an S21)                                                     Jumps to %label and stores PC+4 as return address in %rd.
 
-
-
-
-
-
-
-
-
-
-
+; ; J-type instructions.
+; %inst(inst_j_type)  %rd(reg_id|reg_abi) , %imm(S32 immediate)
+; %op = %inst[6:0]   ; opcode
+; if (%imm % 2 == 1) {
+;     "The offset must be an even number!"
+; }
+; %imm[31:12] %rd[4:0] %op[6:0]
+; # [jal] rd, offset                                                     (offset is an S21)                                                     Jumps to PC+(%imm) and stores PC+4 as return address in %rd.
