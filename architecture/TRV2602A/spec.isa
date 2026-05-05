@@ -106,14 +106,22 @@ srli  0101010010011
 srai  0111010010011
 slti  0000100010011
 sltiu 0000110010011
-lb    0000000000011
-lh    0000010000011
-lw    0000100000011
-lbu   0001000000011
-lhu   0001010000011
 jalr  0000001100111
 ;ecall  1000001110011  ; Not implemented.
 ;ebreak 1010001110011  ; Not implemented.
+
+; All (I-type) 'load signed' instructions.
+inst_i_type_load_s
+; (funct3 = inst[9:7], opcode = inst[6:0])
+lb    0000000011
+lh    0010000011
+lw    0100000011
+
+; All (I-type) 'load unsigned' instructions.
+inst_i_type_load_u
+; (funct3 = inst[9:7], opcode = inst[6:0])
+lbu   1000000011
+lhu   1010000011
 
 ; All S-type instructions.
 ; (funct3 = inst[9:7], opcode = inst[6:0])
@@ -170,12 +178,19 @@ jal 1101111
 %imm[11:0] %rs1[4:0] %f3[2:0] %rd[4:0] %op[6:0]
 # [op] rd, rs1, imm                                                       (imm is an S12)                                                   Implements all I-type instructions (except ecall and ebreak): addi, xori, ori, andi, slli, srli, srai, slti, sltiu, lb, lh, lw, lbu, lhu, jalr.
 
+; I-type load instructions.
+%inst(inst_i_type_load_s|inst_i_type_load_u)  %rd(reg_id|reg_abi) , %imm(S12 immediate) (%rs1(reg_id|reg_abi))
+%f3 = %inst[9:7]   ; funct3
+%op = %inst[6:0]   ; opcode
+%imm[11:0] %rs1[4:0] %f3[2:0] %rd[4:0] %op[6:0]
+# [lb/lh/lw/lbu/lhu] rd, offset(rs1)                                      (offset is an S12)                                                     Loads 8/16/32 bits from memory address (rs1 + offset) into %rd.
+
 ; S-type instructions.
 %inst(inst_s_type)  %rs2(reg_id|reg_abi) , %imm(S12 immediate) (%rs1(reg_id|reg_abi))
 %f3 = %inst[9:7]   ; funct3
 %op = %inst[6:0]   ; opcode
 %imm[11:5] %rs2[4:0] %rs1[4:0] %f3[2:0] %imm[4:0] %op[6:0]
-# [sb/sh/sw] rs2, offset(rs1)                                                (offset is an S12)                                                    Stores the low 8/16/32 bits of rs2 at the memory address (rs1 + offset).
+# [sb/sh/sw] rs2, offset(rs1)                                                (offset is an S12)                                                    Stores the low 8/16/32 bits of %rs2 at the memory address (rs1 + offset).
 
 ; B-type instructions.
 %inst(inst_b_type)  %rs1(reg_id|reg_abi) , %rs2(reg_id|reg_abi) , %label(label)
@@ -216,3 +231,38 @@ jal 1101111
 ; }
 ; %imm[31:12] %rd[4:0] %op[6:0]
 ; # [jal] rd, offset                                                     (offset is an S21)                                                     Jumps to PC+(%imm) and stores PC+4 as return address in %rd.
+
+
+
+;;; Pseudo-instructions.
+; (Note, 'symbols' are labels or immediate constants (I think).)
+
+;? Why are these load/store pseudo-instructions using auipc, rather than lui?
+
+; la rd, symbol  =>  auipc rd, symbol[31:12];   addi rd, rd symbol[11:0]
+la  %rd(reg_id|reg_abi) , %symbol(label|immediate)
+%op_auipc = 0b0010111
+%op_addi = 0b0010011
+%f3_addi = 0b000
+%symbol[31:12] %rd[4:0] %op_auipc[6:0]     %symbol[11:0] %rd[4:0] %f3_addi[2:0] %rd[4:0] %op_addi[6:0]
+# la rd, symbol                                                        (symbol is a label/immediate constant)                                 Loads the address of symbol (%symbol) into %rd.
+
+; 'Load global' pseudo-instructions.
+; Not sure wtf a 'global' is, and that 'global offset table'. I don't have that . . .
+%inst(inst_i_type_load_s)  %rd(reg_id|reg_abi) , %symbol(label|immediate)
+%op_auipc = 0b0010111
+%f3_lg = %inst[9:7]
+%op_lg = %inst[6:0]  ; lg = load global
+%symbol[31:12] %rd[4:0] %op_auipc[6:0]     %symbol[11:0] %rd[4:0] %f3_lg[2:0] %rd[4:0] %op_lg[6:0]
+# [lb/lh/lw] rd, symbol                                                (symbol is a label/immediate constant)                                 Loads the a global variable from the memory address of symbol (%symbol) into %rd.
+
+; 'Store globa' pseudo-instructions.
+; . . .
+
+
+
+
+
+
+
+
